@@ -1,25 +1,12 @@
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { View, ImageBackground, ActivityIndicator, NetInfo, Platform, StyleSheet } from 'react-native';
+import { omit, isEqual, pick, keys, get } from 'lodash';
 
-const _ = require('lodash');
-const React = require('react');
-const ReactNative = require('react-native');
+import ImageCacheManagerOptionsPropTypes from './ImageCacheManagerOptionsPropTypes';
+import ImageCacheManager from './ImageCacheManager';
 
-const PropTypes = require('prop-types');
-
-const ImageCacheManagerOptionsPropTypes = require('./ImageCacheManagerOptionsPropTypes');
-
-const flattenStyle = ReactNative.StyleSheet.flatten;
-
-const ImageCacheManager = require('./ImageCacheManager');
-
-const {
-    View,
-    ImageBackground,
-    ActivityIndicator,
-    NetInfo,
-    Platform,
-    StyleSheet,
-} = ReactNative;
+const flattenStyle = StyleSheet.flatten;
 
 const styles = StyleSheet.create({
     image: {
@@ -36,12 +23,12 @@ const styles = StyleSheet.create({
 });
 
 function getImageProps(props) {
-    return _.omit(props, ['source', 'defaultSource', 'fallbackSource', 'LoadingIndicator', 'activityIndicatorProps', 'style', 'useQueryParamsInCacheKey', 'renderImage', 'resolveHeaders']);
+    return omit(props, ['source', 'defaultSource', 'fallbackSource', 'LoadingIndicator', 'activityIndicatorProps', 'style', 'useQueryParamsInCacheKey', 'renderImage', 'resolveHeaders']);
 }
 
 const CACHED_IMAGE_REF = 'cachedImage';
 
-class CachedImage extends React.Component {
+export default class CachedImage extends React.Component {
 
     static propTypes = {
         renderImage: PropTypes.func.isRequired,
@@ -97,7 +84,7 @@ class CachedImage extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!_.isEqual(this.props.source, nextProps.source)) {
+        if (!isEqual(this.props.source, nextProps.source)) {
             this.processSource(nextProps.source);
         }
     }
@@ -111,7 +98,7 @@ class CachedImage extends React.Component {
     }
 
     getImageCacheManagerOptions() {
-        return _.pick(this.props, _.keys(ImageCacheManagerOptionsPropTypes));
+        return pick(this.props, keys(ImageCacheManagerOptionsPropTypes));
     }
 
     getImageCacheManager() {
@@ -138,7 +125,7 @@ class CachedImage extends React.Component {
     }
 
     processSource(source) {
-        const url = _.get(source, ['uri'], null);
+        const url = get(source, ['uri'], null);
         const options = this.getImageCacheManagerOptions();
         const imageCacheManager = this.getImageCacheManager();
 
@@ -186,7 +173,7 @@ class CachedImage extends React.Component {
         const imageProps = getImageProps(this.props);
         const imageStyle = [this.props.style, styles.loaderPlaceholder];
 
-        const activityIndicatorProps = _.omit(this.props.activityIndicatorProps, ['style']);
+        const activityIndicatorProps = omit(this.props.activityIndicatorProps, ['style']);
         const activityIndicatorStyle = this.props.activityIndicatorProps.style || styles.loader;
 
         const LoadingIndicator = this.props.loadingIndicator;
@@ -228,5 +215,3 @@ class CachedImage extends React.Component {
     }
 
 }
-
-module.exports = CachedImage;

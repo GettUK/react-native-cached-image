@@ -1,6 +1,4 @@
-'use strict';
-
-const PropTypes = require('prop-types');
+import PropTypes from 'prop-types';
 
 module.exports = {
     headers: PropTypes.object,

@@ -1,22 +1,16 @@
-'use strict';
-
-const _ = require('lodash');
-const URL = require('url-parse');
-const SHA1 = require("crypto-js/sha1");
+import { isArray, pick, toLower, toPairs, sortBy, map } from 'lodash';
+import URL from 'url-parse';
+import SHA1 from 'crypto-js/sha1';
 
 const defaultImageTypes = ['png', 'jpeg', 'jpg', 'gif', 'bmp', 'tiff', 'tif'];
 
 function serializeObjectKeys(obj) {
-    return _(obj)
-        .toPairs()
-        .sortBy(a => a[0])
-        .map(a => a[1])
-        .value();
+    return map(sortBy(toPairs(obj), a => a[0]), a[1])
 }
 
 function getQueryForCacheKey(url, useQueryParamsInCacheKey) {
-    if (_.isArray(useQueryParamsInCacheKey)) {
-        return serializeObjectKeys(_.pick(url.query, useQueryParamsInCacheKey));
+    if (isArray(useQueryParamsInCacheKey)) {
+        return serializeObjectKeys(pick(url.query, useQueryParamsInCacheKey));
     }
     if (useQueryParamsInCacheKey) {
         return serializeObjectKeys(url.query);
@@ -34,7 +28,7 @@ function generateCacheKey(url, useQueryParamsInCacheKey = true) {
     const filePath = pathParts.join('/');
 
     const parts = fileName.split('.');
-    const fileType = parts.length > 1 ? _.toLower(parts.pop()) : '';
+    const fileType = parts.length > 1 ? toLower(parts.pop()) : '';
     const type = defaultImageTypes.includes(fileType) ? fileType : 'jpg';
 
     const cacheable = filePath + fileName + type + getQueryForCacheKey(parsedUrl, useQueryParamsInCacheKey);
@@ -53,7 +47,7 @@ function getHostCachePathComponent(url) {
 /**
  * handle the resolution of URLs to local file paths
  */
-module.exports = {
+export default {
 
     /**
      * Given a URL and some options returns the file path in the file system corresponding to it's cached image location
@@ -90,8 +84,8 @@ module.exports = {
      */
     getCacheableUrl(url, useQueryParamsInCacheKey) {
         const parsedUrl = new URL(url, null, true);
-        if (_.isArray(useQueryParamsInCacheKey)) {
-            parsedUrl.set('query', _.pick(parsedUrl.query, useQueryParamsInCacheKey));
+        if (isArray(useQueryParamsInCacheKey)) {
+            parsedUrl.set('query', pick(parsedUrl.query, useQueryParamsInCacheKey));
         }
         if (!useQueryParamsInCacheKey) {
             parsedUrl.set('query', {});

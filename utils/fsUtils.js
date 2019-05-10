@@ -1,8 +1,5 @@
-'use strict';
-
-const _ = require('lodash');
-
-const RNFetchBlob = require('react-native-fetch-blob').default;
+import { initial, map, has, flattenDeep, sumBy, } from 'lodash';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const {
     fs
@@ -13,7 +10,7 @@ const activeDownloads = {};
 function getDirPath(path) {
     // if path is a file (has ext) remove it
     if (path.charAt(path.length - 4) === '.' || path.charAt(path.length - 5) === '.') {
-        return _.initial(path.split('/')).join('/');
+        return initial(path.split('/')).join('/');
     }
     return path;
 }
@@ -51,7 +48,7 @@ function collectFilesInfo(basePath) {
             }
             return fs.ls(basePath)
                 .then(files => {
-                    const promises = _.map(files, file => {
+                    const promises = map(files, file => {
                         return collectFilesInfo(`${basePath}/${file}`);
                     });
                     return Promise.all(promises);
@@ -65,7 +62,7 @@ function collectFilesInfo(basePath) {
 /**
  * wrapper around common filesystem actions
  */
-module.exports = {
+export default {
 
     /**
      * returns the local cache dir
@@ -87,7 +84,7 @@ module.exports = {
      */
     downloadFile(fromUrl, toFile, headers) {
         // use toFile as the key as is was created using the cacheKey
-        if (!_.has(activeDownloads, toFile)) {
+        if (!has(activeDownloads, toFile)) {
             // using a temporary file, if the download is accidentally interrupted, it will not produce a disabled file
             const tmpFile = toFile + '.tmp';
             // create an active download for this file
@@ -190,8 +187,8 @@ module.exports = {
                 }
             })
             .then(filesInfo => {
-                const files = _.flattenDeep(filesInfo);
-                const size = _.sumBy(files, 'size');
+                const files = flattenDeep(filesInfo);
+                const size = sumBy(files, 'size');
                 return {
                     files,
                     size

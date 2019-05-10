@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports.CachedImage = require('./CachedImage');
-module.exports.ImageCacheProvider = require('./ImageCacheProvider');
-module.exports.ImageCacheManager = require('./ImageCacheManager');
-module.exports.ImageCachePreloader = require('./ImageCachePreloader');
+export { default as CachedImage } from './CachedImage';
+export { default as ImageCacheProvider } from './ImageCacheProvider';
+export { default as ImageCacheManager } from './ImageCacheManager';
+export { default as ImageCachePreloader } from './ImageCachePreloader';

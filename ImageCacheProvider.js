@@ -1,17 +1,12 @@
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { noop, pick, keys } from 'lodash';
 
-const _ = require('lodash');
-const React = require('react');
-const ReactNative = require('react-native');
+import ImageCacheManagerOptionsPropTypes from './ImageCacheManagerOptionsPropTypes';
+import ImageCacheManager from './ImageCacheManager';
+import ImageCachePreloader from './ImageCachePreloader';
 
-const PropTypes = require('prop-types');
-
-const ImageCacheManagerOptionsPropTypes = require('./ImageCacheManagerOptionsPropTypes');
-
-const ImageCacheManager = require('./ImageCacheManager');
-const ImageCachePreloader = require('./ImageCachePreloader');
-
-class ImageCacheProvider extends React.Component {
+export default class ImageCacheProvider extends React.Component {
     static propTypes = {
         // only a single child so we can render it without adding a View
         children: PropTypes.element,
@@ -29,7 +24,7 @@ class ImageCacheProvider extends React.Component {
     static defaultProps = {
         urlsToPreload: [],
         numberOfConcurrentPreloads: 0,
-        onPreloadComplete: _.noop,
+        onPreloadComplete: noop,
     };
 
     static childContextTypes = {
@@ -68,7 +63,7 @@ class ImageCacheProvider extends React.Component {
     }
 
     getImageCacheManagerOptions() {
-        return _.pick(this.props, _.keys(ImageCacheManagerOptionsPropTypes));
+        return pick(this.props, keys(ImageCacheManagerOptionsPropTypes));
     }
 
     getImageCacheManager() {
@@ -90,5 +85,3 @@ class ImageCacheProvider extends React.Component {
     }
 
 }
-
-module.exports = ImageCacheProvider;

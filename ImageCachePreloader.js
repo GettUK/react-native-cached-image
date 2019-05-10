@@ -1,9 +1,7 @@
-'use strict';
-
-const _ = require('lodash');
+import { clone, noop, times } from 'lodash';
 
 function createPreloader(list) {
-    const urls = _.clone(list);
+    const urls = clone(list);
     return {
         next() {
             return urls.shift();
@@ -19,7 +17,7 @@ function runPreloadTask(prefetcher, imageCacheManager) {
     // console.log('START', url);
     return imageCacheManager.downloadAndCacheUrl(url)
         // allow prefetch task to fail without terminating other prefetch tasks
-        .catch(_.noop)
+        .catch(noop)
         // .then(() => {
         //     console.log('END', url);
         // })
@@ -27,7 +25,7 @@ function runPreloadTask(prefetcher, imageCacheManager) {
         .then(() => runPreloadTask(prefetcher, imageCacheManager));
 }
 
-module.exports = {
+export default {
 
     /**
      * download and cache an list of urls
@@ -39,7 +37,7 @@ module.exports = {
     preloadImages(urls, imageCacheManager, numberOfConcurrentPreloads) {
         const preloader = createPreloader(urls);
         const numberOfWorkers = numberOfConcurrentPreloads > 0 ? numberOfConcurrentPreloads : urls.length;
-        const promises = _.times(numberOfWorkers, () =>
+        const promises = times(numberOfWorkers, () =>
             runPreloadTask(preloader, imageCacheManager)
         );
         return Promise.all(promises);
