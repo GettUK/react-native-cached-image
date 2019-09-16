@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ImageBackground, ActivityIndicator, NetInfo, Platform, StyleSheet } from 'react-native';
+import { View, ImageBackground, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { omit, isEqual, pick, keys, get } from 'lodash';
 
 import ImageCacheManagerOptionsPropTypes from './ImageCacheManagerOptionsPropTypes';
